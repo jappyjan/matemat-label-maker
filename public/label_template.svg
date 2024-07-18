@@ -1,0 +1,8 @@
+<svg width="630" height="800" viewBox="0 0 630 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="630" height="800" fill="black"/>
+<text fill="white" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="96" letter-spacing="0em"><tspan x="120.156" y="136.409">{{name}}</tspan></text>
+<text fill="white" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="42" letter-spacing="0em"><tspan x="244.855" y="216.773">{{size}}</tspan></text>
+<text fill="white" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="42" letter-spacing="0em"><tspan x="234.52" y="537.773">{{price}}</tspan></text>
+<text fill="white" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="42" letter-spacing="0em"><tspan x="173.304" y="693.773">{{footerLine1}}</tspan></text>
+<text fill="white" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="42" letter-spacing="0em"><tspan x="170.351" y="774.773">{{footerLine2}}</tspan></text>
+</svg>
