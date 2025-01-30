@@ -36,6 +36,7 @@ export async function generateLabel(
     });
 
     if (!response.ok) {
+      console.log(await response.text());
       throw new Error(
         `Failed to generate OG image (${fullImageURL}): ${response.statusText}`,
       );

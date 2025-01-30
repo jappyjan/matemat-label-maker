@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useDebounce } from "~/_hooks/use-debounce";
 
 export function LabelGenerator() {
   const [placeholders, setPlaceholders] = useState<Record<string, string>>({
@@ -15,7 +16,7 @@ export function LabelGenerator() {
     setPlaceholders((prev) => ({ ...prev, [key]: value }));
   }, []);
 
-  const labelURL = useMemo(() => {
+  const labelURLGenerator = useCallback(() => {
     const searchParams = new URLSearchParams();
     Object.entries(placeholders).forEach(([key, value]) => {
       searchParams.append(key, value);
@@ -23,6 +24,8 @@ export function LabelGenerator() {
 
     return `/api/matemat-label?${searchParams.toString()}`;
   }, [placeholders]);
+
+  const labelURL = useDebounce(labelURLGenerator, 1000);
 
   return (
     <div className="w-full max-w-xs text-white">
