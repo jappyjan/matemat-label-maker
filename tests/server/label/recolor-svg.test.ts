@@ -16,9 +16,15 @@ describe("recolorSvg", () => {
     expect(out).not.toContain('fill="#000"');
   });
 
-  test("adds fill to elements that lack it", () => {
+  test("adds fill to elements that lack it without breaking self-closing", () => {
     const out = recolorSvg(SAMPLE_SVG, "#ff0000");
-    expect(out).toMatch(/<rect [^>]*fill="#ff0000"/);
+    expect(out).toMatch(/<rect width="10" height="10" fill="#ff0000"\s*\/>/);
+  });
+
+  test("adds fill to non-self-closing tags", () => {
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg"><g><circle cx="50" cy="50" r="20"></circle></g></svg>';
+    const out = recolorSvg(svg, "#abcdef");
+    expect(out).toMatch(/<circle cx="50" cy="50" r="20" fill="#abcdef"><\/circle>/);
   });
 });
 

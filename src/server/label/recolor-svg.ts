@@ -9,10 +9,11 @@ export function recolorSvg(svg: string, color: string): string {
   let out = svg.replace(FILL_ATTR, ` fill="${color}"`);
 
   for (const tag of PAINTABLE_TAGS) {
-    const opener = new RegExp(`<${tag}\\b([^>]*)>`, "g");
-    out = out.replace(opener, (match, attrs: string) => {
+    const opener = new RegExp(`<${tag}\\b([^>]*?)(\\s*/)?>`, "g");
+    out = out.replace(opener, (match, attrs: string, selfClose: string | undefined) => {
       if (/\sfill\s*=/.test(attrs)) return match;
-      return `<${tag}${attrs} fill="${color}">`;
+      const close = selfClose ?? "";
+      return `<${tag}${attrs} fill="${color}"${close}>`;
     });
   }
 
