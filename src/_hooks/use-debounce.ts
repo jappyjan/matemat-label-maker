@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-export function useDebounce<T>(generator: () => Promise<T>, delay: number) {
+export function useDebounce<T>(generator: () => T | Promise<T>, delay: number) {
   const [result, setResult] = useState<T | null>(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      generator().then(setResult);
+      void Promise.resolve(generator()).then(setResult);
     }, delay);
 
     return () => clearTimeout(timeout);
