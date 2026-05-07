@@ -26,7 +26,7 @@ function renderTextSlot(text: string, slot: typeof SLOTS[Exclude<SlotKey, "logo"
   if (!text) return "";
   const fontSize = fitFontSize(text, slot.width, slot.defaultFontSize, MIN_FONT);
   const safe = escapeXml(text);
-  return `<text font-family="Inter" font-size="${fontSize}" fill="${color}" textLength="${slot.width}" lengthAdjust="spacingAndGlyphs"><tspan x="${slot.x}" y="${slot.y}" textLength="${slot.width}" lengthAdjust="spacingAndGlyphs">${safe}</tspan></text>`;
+  return `<text font-family="Inter" font-size="${fontSize}" fill="${color}"><tspan x="${slot.x}" y="${slot.y}" textLength="${slot.width}" lengthAdjust="spacingAndGlyphs">${safe}</tspan></text>`;
 }
 
 function renderLogo(logo: LoadedLogo | null, foreground: string): string {
@@ -60,6 +60,8 @@ export function renderLabelSvg(config: LabelConfig, logo: LoadedLogo | null): st
 
 export function rotateSvg(svg: string, rotate: 0 | 90): string {
   if (rotate === 0) return svg;
+  // SVG transforms apply right-to-left: translate(0,-800) shifts the canvas to y∈[-800,0],
+  // then rotate(90 0 0) maps (x,y)→(-y,x), landing inside the new 800×630 viewBox.
   return svg
     .replace(
       /<svg([^>]*)>/,
