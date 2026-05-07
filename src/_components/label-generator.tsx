@@ -50,7 +50,7 @@ export function LabelGenerator() {
       <br />
 
       {/* eslint-disable-next-line @next/next/no-img-element*/}
-      <img src={labelURL} alt="Label" className="w-full max-w-xs" />
+      <img src={labelURL ?? undefined} alt="Label" className="w-full max-w-xs" />
     </div>
   );
 }
