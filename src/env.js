@@ -8,6 +8,12 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
+    DATABASE_PATH: z.string().default("./data/matemat.db"),
+    UPLOADS_DIR: z.string().default("./data/uploads"),
+    GENERATOR_URL: z.string().url(),
+    GENERATOR_USER: z.string(),
+    GENERATOR_PASS: z.string(),
+    INTERNAL_BASE_URL: z.string().url(),
   },
 
   /**
@@ -15,9 +21,7 @@ export const env = createEnv({
    * isn't built with invalid env vars. To expose them to the client, prefix them with
    * `NEXT_PUBLIC_`.
    */
-  client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
-  },
+  client: {},
 
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
@@ -25,7 +29,12 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    DATABASE_PATH: process.env.DATABASE_PATH,
+    UPLOADS_DIR: process.env.UPLOADS_DIR,
+    GENERATOR_URL: process.env.GENERATOR_URL ?? process.env.NEXT_PUBLIC_GENERATOR_URL,
+    GENERATOR_USER: process.env.GENERATOR_USER ?? process.env.NEXT_PUBLIC_GENERATOR_USER,
+    GENERATOR_PASS: process.env.GENERATOR_PASS ?? process.env.NEXT_PUBLIC_GENERATOR_PASS,
+    INTERNAL_BASE_URL: process.env.INTERNAL_BASE_URL ?? process.env.NEXT_PUBLIC_BASE_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
