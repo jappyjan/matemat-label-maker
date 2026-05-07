@@ -1,0 +1,21 @@
+services:
+  matemat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_FQDN_MATEMAT_3000
+      - NEXT_PUBLIC_GENERATOR_URL=http://og-image-generator:3003/og-image.png
+      - NEXT_PUBLIC_GENERATOR_USER=matemat
+      - NEXT_PUBLIC_GENERATOR_PASS=$SERVICE_PASSWORD_GENERATOR
+      - NEXT_PUBLIC_BASE_URL=http://matemat:3000
+    depends_on:
+      - og-image-generator
+
+  og-image-generator:
+    build:
+      context: ./og-image-generator
+      dockerfile: Dockerfile
+    environment:
+      - AUTH_USERS=matemat
+      - AUTH_USER_matemat_PASSWORD=$SERVICE_PASSWORD_GENERATOR
