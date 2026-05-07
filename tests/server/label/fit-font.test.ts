@@ -19,17 +19,21 @@ describe("fitFontSize", () => {
   });
 
   test("shrinks until it fits", () => {
-    const fitted = fitFontSize(
-      "an extremely long product name that overflows",
-      300,
-      96,
-      24,
-    );
+    const text = "Hello there world friend"; // 24 chars
+    const fitted = fitFontSize(text, 400, 96, 24);
     expect(fitted).toBeLessThan(96);
-    expect(measureTextWidth("an extremely long product name that overflows", fitted)).toBeLessThanOrEqual(300);
+    expect(fitted).toBeGreaterThanOrEqual(24);
+    expect(measureTextWidth(text, fitted)).toBeLessThanOrEqual(400);
   });
 
   test("never goes below minimum", () => {
     expect(fitFontSize("x".repeat(500), 10, 96, 24)).toBe(24);
+  });
+
+  test("returns minSize as floor when text overflows even at minSize", () => {
+    // long text that does not fit at minSize=24 within maxWidth=200
+    // (textLength/lengthAdjust at render time compensates for overflow)
+    const fitted = fitFontSize("a very very very long string of words", 200, 96, 24);
+    expect(fitted).toBe(24);
   });
 });

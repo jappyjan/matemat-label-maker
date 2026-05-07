@@ -16,7 +16,7 @@ export function fitFontSize(
 ): number {
   if (text.length === 0) return defaultSize;
   if (measureTextWidth(text, defaultSize) <= maxWidth) return defaultSize;
-  for (let size = defaultSize - 1; size >= 1; size--) {
+  for (let size = defaultSize; size >= minSize; size--) {
     if (measureTextWidth(text, size) <= maxWidth) return size;
   }
   return minSize;
