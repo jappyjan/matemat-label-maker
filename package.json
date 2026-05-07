@@ -8,6 +8,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
+    "db:generate": "drizzle-kit generate",
     "test": "vitest run",
     "test:watch": "vitest"
   },
