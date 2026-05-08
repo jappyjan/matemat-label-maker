@@ -24,8 +24,16 @@ export function setupApiEnv(): ApiTestEnv {
     uploadsDir,
     rootDir: root,
     cleanup: () => {
-      process.env.DATABASE_PATH = prev.DATABASE_PATH;
-      process.env.UPLOADS_DIR = prev.UPLOADS_DIR;
+      if (prev.DATABASE_PATH === undefined) {
+        delete process.env.DATABASE_PATH;
+      } else {
+        process.env.DATABASE_PATH = prev.DATABASE_PATH;
+      }
+      if (prev.UPLOADS_DIR === undefined) {
+        delete process.env.UPLOADS_DIR;
+      } else {
+        process.env.UPLOADS_DIR = prev.UPLOADS_DIR;
+      }
       rmSync(root, { recursive: true, force: true });
     },
   };
