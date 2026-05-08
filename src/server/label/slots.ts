@@ -9,12 +9,12 @@ export interface SlotBox {
 export const CANVAS = { width: 630, height: 800 } as const;
 
 export const SLOTS = {
-  name:        { x: 120, y: 136.409, width: 510, height: 120, defaultFontSize: 96 },
-  size:        { x: 245, y: 216.773, width: 380, height: 60,  defaultFontSize: 42 },
-  logo:        { x: 120, y: 260,     width: 390, height: 240, defaultFontSize: 0  },
-  price:       { x: 235, y: 537.773, width: 380, height: 60,  defaultFontSize: 42 },
-  footerLine1: { x: 173, y: 693.773, width: 450, height: 60,  defaultFontSize: 42 },
-  footerLine2: { x: 170, y: 774.773, width: 450, height: 60,  defaultFontSize: 42 },
+  name:        { x: 60,  y: 130, width: 510, height: 120, defaultFontSize: 96 },
+  size:        { x: 60,  y: 200, width: 510, height: 60,  defaultFontSize: 42 },
+  logo:        { x: 165, y: 260, width: 300, height: 220, defaultFontSize: 0  },
+  price:       { x: 60,  y: 600, width: 510, height: 100, defaultFontSize: 88 },
+  footerLine1: { x: 60,  y: 740, width: 510, height: 28,  defaultFontSize: 22 },
+  footerLine2: { x: 60,  y: 772, width: 510, height: 28,  defaultFontSize: 22 },
 } satisfies Record<string, SlotBox>;
 
 export type SlotKey = keyof typeof SLOTS;
