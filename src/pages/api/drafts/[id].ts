@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!row) return res.status(404).json({ error: "not_found" });
     return res.status(200).json({
       id: row.id,
-      config: JSON.parse(row.config),
+      config: JSON.parse(row.config) as unknown,
       updatedAt: row.updatedAt,
     });
   }

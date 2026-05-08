@@ -59,14 +59,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const mime = file.mimetype ?? "";
   if (!isAllowedMime(mime)) {
-    await unlink(file.filepath).catch(() => {});
+    await unlink(file.filepath).catch(() => undefined);
     return res.status(415).json({ error: "unsupported_format" });
   }
 
   const id = nanoid(12);
   const ext = extensionFromMime(mime);
   const bytes = await readFile(file.filepath);
-  await unlink(file.filepath).catch(() => {});
+  await unlink(file.filepath).catch(() => undefined);
   const storage = getLogoStorage();
   const { relativePath } = await storage.save({ id, extension: ext, bytes });
 

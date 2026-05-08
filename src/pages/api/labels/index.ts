@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       rows.map((row) => ({
         id: row.id,
         name: row.name,
-        config: JSON.parse(row.config),
+        config: JSON.parse(row.config) as unknown,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
       })),

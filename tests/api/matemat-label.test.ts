@@ -34,7 +34,7 @@ describe("GET /api/matemat-label", () => {
     expect(res._getStatusCode()).toBe(200);
     expect(res.getHeader("content-type")).toBe("image/png");
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    const callUrl = fetchSpy.mock.calls[0][0] as string;
+    const callUrl = fetchSpy.mock.calls[0]?.[0] as string;
     expect(callUrl).toContain("svgUrl=");
     expect(callUrl).toContain(encodeURIComponent("http://app.example/api/labels/abc/svg"));
     expect(callUrl).toContain(encodeURIComponent("rotate=90"));

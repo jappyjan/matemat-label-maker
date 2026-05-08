@@ -54,6 +54,6 @@ describe("download.png", () => {
     expect(res._getStatusCode()).toBe(200);
     expect(res.getHeader("content-type")).toBe("image/png");
     expect(String(res.getHeader("content-disposition"))).toContain("Bionade");
-    expect(fetchSpy.mock.calls[0][0] as string).toMatch(/scale=2|width=1260|height=1600/);
+    expect(fetchSpy.mock.calls[0]?.[0] as string).toMatch(/scale=2|width=1260|height=1600/);
   });
 });

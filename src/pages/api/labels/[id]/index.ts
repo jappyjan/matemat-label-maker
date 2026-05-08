@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({
       id: row.id,
       name: row.name,
-      config: JSON.parse(row.config),
+      config: JSON.parse(row.config) as unknown,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });

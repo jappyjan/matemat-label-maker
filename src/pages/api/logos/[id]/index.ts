@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         for (const l of usingLabels) {
           const cfg = tx.select().from(labels).where(eq(labels.id, l.id)).limit(1).all()[0];
           if (!cfg) continue;
-          const parsedCfg = JSON.parse(cfg.config);
+          const parsedCfg: { logoId: string | null } = JSON.parse(cfg.config) as { logoId: string | null };
           parsedCfg.logoId = null;
           tx.update(labels)
             .set({ config: JSON.stringify(parsedCfg), updatedAt: Date.now() })
@@ -61,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         for (const d of usingDrafts) {
           const cfg = tx.select().from(drafts).where(eq(drafts.id, d.id)).limit(1).all()[0];
           if (!cfg) continue;
-          const parsedCfg = JSON.parse(cfg.config);
+          const parsedCfg: { logoId: string | null } = JSON.parse(cfg.config) as { logoId: string | null };
           parsedCfg.logoId = null;
           tx.update(drafts)
             .set({ config: JSON.stringify(parsedCfg), updatedAt: Date.now() })

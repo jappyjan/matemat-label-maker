@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const rows = await db.select().from(drafts);
     const out = rows.map((row) => ({
       id: row.id,
-      config: JSON.parse(row.config),
+      config: JSON.parse(row.config) as unknown,
       updatedAt: row.updatedAt,
     }));
     return res.status(200).json(out);
