@@ -15,9 +15,6 @@ services:
       - matemat-data:/data
     depends_on:
       - og-image-generator
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.matemat.loadbalancer.server.port=3000
 
   og-image-generator:
     build:
