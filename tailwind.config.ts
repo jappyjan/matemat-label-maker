@@ -6,7 +6,13 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+        sans: ["var(--font-inter)", ...fontFamily.sans],
+      },
+      colors: {
+        accent: {
+          DEFAULT: "#6366f1",
+          hover: "#818cf8",
+        },
       },
     },
   },
