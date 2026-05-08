@@ -28,3 +28,11 @@ export function getDb(): Db {
   cached = createDb({ databasePath });
   return cached.db;
 }
+
+/** Reset the singleton — call in test teardown when DATABASE_PATH changes. */
+export function resetDbCache(): void {
+  if (cached) {
+    cached.sqlite.close();
+    cached = null;
+  }
+}

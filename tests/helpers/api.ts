@@ -1,6 +1,7 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { resetDbCache } from "~/server/db/client";
 
 export interface ApiTestEnv {
   databasePath: string;
@@ -19,11 +20,13 @@ export function setupApiEnv(): ApiTestEnv {
   };
   process.env.DATABASE_PATH = databasePath;
   process.env.UPLOADS_DIR = uploadsDir;
+  resetDbCache();
   return {
     databasePath,
     uploadsDir,
     rootDir: root,
     cleanup: () => {
+      resetDbCache();
       if (prev.DATABASE_PATH === undefined) {
         delete process.env.DATABASE_PATH;
       } else {
@@ -41,7 +44,8 @@ export function setupApiEnv(): ApiTestEnv {
 
 export async function loadFreshHandler<T>(modulePath: string): Promise<T> {
   // Vitest caches modules; this forces a re-import so the env vars above are picked up.
-  const cacheBust = `?t=${Date.now()}-${Math.random()}`;
+  const rand = Math.random().toString(36).slice(2);
+  const cacheBust = `?t=${Date.now()}-${rand}`;
   const mod: { default: T } = await import(`${modulePath}${cacheBust}`);
   return mod.default;
 }
