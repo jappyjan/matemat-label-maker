@@ -56,4 +56,49 @@ describe("batch-download", () => {
     await handler(req, res);
     expect(res._getStatusCode()).toBe(404);
   });
+
+  test("400 missing_ids when ids param is empty", async () => {
+    const handler = await importHandler("../../src/pages/api/labels/batch-download");
+    const { req, res } = createMocks({ method: "GET", query: { ids: "", format: "svg" } });
+    await handler(req, res);
+    expect(res._getStatusCode()).toBe(400);
+    expect(res._getJSONData().error).toBe("missing_ids");
+  });
+
+  test("400 bad_scale only after ids are present", async () => {
+    const handler = await importHandler("../../src/pages/api/labels/batch-download");
+    const { req, res } = createMocks({ method: "GET", query: { ids: "x", format: "png", scale: "3" } });
+    await handler(req, res);
+    expect(res._getStatusCode()).toBe(400);
+    expect(res._getJSONData().error).toBe("bad_scale");
+  });
+
+  test("png path forwards each label to generator", async () => {
+    const a = await makeLabel("Coke");
+    const b = await makeLabel("Bionade");
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(
+      () => Promise.resolve(new Response(new Uint8Array([1, 2, 3, 4]), { status: 200 })),
+    );
+    const handler = await importHandler("../../src/pages/api/labels/batch-download");
+    const { req, res } = createMocks({
+      method: "GET", query: { ids: `${a},${b}`, format: "png", scale: "2" },
+    });
+    await handler(req, res);
+    expect(res._getStatusCode()).toBe(200);
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    const buf = res._getData() as Buffer;
+    const zip = await JSZip.loadAsync(buf);
+    expect(Object.keys(zip.files).filter((f) => f.endsWith(".png"))).toHaveLength(2);
+  });
+
+  test("png path returns 502 if all fetches fail", async () => {
+    const a = await makeLabel("Coke");
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("nope", { status: 500 }));
+    const handler = await importHandler("../../src/pages/api/labels/batch-download");
+    const { req, res } = createMocks({
+      method: "GET", query: { ids: a, format: "png", scale: "1" },
+    });
+    await handler(req, res);
+    expect(res._getStatusCode()).toBe(502);
+  });
 });

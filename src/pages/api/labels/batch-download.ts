@@ -19,15 +19,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).end();
   }
   const idsParam = req.query.ids;
-  const format = req.query.format === "png" ? "png" : "svg";
-  const scale = Number(req.query.scale ?? "1");
-  if (![1, 2, 4].includes(scale)) return res.status(400).json({ error: "bad_scale" });
-  const rotate: 0 | 90 = req.query.rotate === "90" ? 90 : 0;
   if (typeof idsParam !== "string" || idsParam.length === 0) {
     return res.status(400).json({ error: "missing_ids" });
   }
   const ids = idsParam.split(",").filter(Boolean);
   if (ids.length === 0) return res.status(400).json({ error: "missing_ids" });
+
+  const format = req.query.format === "png" ? "png" : "svg";
+  const scale = Number(req.query.scale ?? "1");
+  if (![1, 2, 4].includes(scale)) return res.status(400).json({ error: "bad_scale" });
+  const rotate: 0 | 90 = req.query.rotate === "90" ? 90 : 0;
 
   const db = getDb();
   const rows = await db.select().from(labels).where(inArray(labels.id, ids));
@@ -50,6 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const base = process.env.INTERNAL_BASE_URL!;
     const auth = `Basic ${Buffer.from(`${user}:${pass}`).toString("base64")}`;
 
+    let successes = 0;
     for (const row of rows) {
       const svgParams = new URLSearchParams({ id: row.id, kind: "saved" });
       if (rotate === 90) svgParams.set("rotate", "90");
@@ -57,10 +59,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const w = (rotate === 90 ? CANVAS.height : CANVAS.width) * scale;
       const h = (rotate === 90 ? CANVAS.width : CANVAS.height) * scale;
       const fullURL = `${endpoint}?svgUrl=${encodeURIComponent(svgURL)}&width=${w}&height=${h}&scale=${scale}`;
-      const resp = await fetch(fullURL, { headers: { Authorization: auth } });
-      if (!resp.ok) continue;
-      const buf = Buffer.from(await resp.arrayBuffer());
-      zip.file(`${safeFilename(row.name)}@${scale}x.png`, buf);
+      try {
+        const resp = await fetch(fullURL, { headers: { Authorization: auth } });
+        if (!resp.ok) continue;
+        const buf = Buffer.from(await resp.arrayBuffer());
+        zip.file(`${safeFilename(row.name)}@${scale}x.png`, buf);
+        successes++;
+      } catch {
+        // skip
+      }
+    }
+    if (successes === 0) {
+      return res.status(502).json({ error: "all_png_failed" });
     }
   }
 
