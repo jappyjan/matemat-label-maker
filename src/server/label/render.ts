@@ -27,9 +27,11 @@ function renderTextSlot(text: string, slot: typeof SLOTS[Exclude<SlotKey, "logo"
   const fontSize = fitFontSize(text, slot.width, slot.defaultFontSize, MIN_FONT);
   const naturalWidth = measureTextWidth(text, fontSize);
   const safe = escapeXml(text);
-  // Only emit textLength when text would otherwise overflow the slot — otherwise
-  // lengthAdjust=spacingAndGlyphs would visually stretch short text.
-  const lengthAttrs = naturalWidth > slot.width
+  // Emit textLength as a renderer-side safety net when text was shrunk OR
+  // is approximation-close to the slot edge — our glyph widths are estimates
+  // and Inter's actual rendering can be slightly wider than our table.
+  const tight = fontSize < slot.defaultFontSize || naturalWidth > slot.width * 0.9;
+  const lengthAttrs = tight
     ? ` textLength="${slot.width}" lengthAdjust="spacingAndGlyphs"`
     : "";
   return `<text font-family="Inter" font-size="${fontSize}" fill="${color}"><tspan x="${slot.x}" y="${slot.y}"${lengthAttrs}>${safe}</tspan></text>`;
