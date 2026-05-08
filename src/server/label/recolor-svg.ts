@@ -1,4 +1,4 @@
-const FILL_ATTR = /\sfill\s*=\s*("[^"]*"|'[^']*')/g;
+const FILL_ATTR = /\sfill\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
 const SVG_OPEN = /<svg\b[^>]*>/i;
 const SVG_CLOSE = /<\/svg>/i;
 const PAINTABLE_TAGS = [
@@ -6,7 +6,11 @@ const PAINTABLE_TAGS = [
 ];
 
 export function recolorSvg(svg: string, color: string): string {
-  let out = svg.replace(FILL_ATTR, ` fill="${color}"`);
+  let out = svg.replace(FILL_ATTR, (match, doubleQ?: string, singleQ?: string) => {
+    const value = (doubleQ ?? singleQ ?? "").trim().toLowerCase();
+    if (value === "none" || value === "transparent") return match;
+    return ` fill="${color}"`;
+  });
 
   for (const tag of PAINTABLE_TAGS) {
     const opener = new RegExp(`<${tag}\\b([^>]*?)(\\s*/)?>`, "g");

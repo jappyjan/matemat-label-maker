@@ -26,6 +26,15 @@ describe("recolorSvg", () => {
     const out = recolorSvg(svg, "#abcdef");
     expect(out).toMatch(/<circle cx="50" cy="50" r="20" fill="#abcdef"><\/circle>/);
   });
+
+  test('preserves fill="none" and fill="transparent"', () => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect fill="none" /><circle fill="transparent" cx="5" cy="5" r="3" /><path fill="black" d="M0 0H10V10H0Z" /></svg>`;
+    const out = recolorSvg(svg, "#ff0000");
+    expect(out).toContain('fill="none"');
+    expect(out).toContain('fill="transparent"');
+    expect(out).toContain('fill="#ff0000"');
+    expect(out).not.toContain('fill="black"');
+  });
 });
 
 describe("extractSvgInner", () => {
