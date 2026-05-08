@@ -5,17 +5,16 @@ services:
       dockerfile: Dockerfile
     environment:
       - SERVICE_FQDN_MATEMAT_3000
-      - NEXT_PUBLIC_GENERATOR_URL=http://og-image-generator:3003/og-image.png
-      - NEXT_PUBLIC_GENERATOR_USER=matemat
-      - NEXT_PUBLIC_GENERATOR_PASS=$SERVICE_PASSWORD_GENERATOR
-      - NEXT_PUBLIC_BASE_URL=http://matemat:3000
+      - GENERATOR_URL=http://og-image-generator:3003/og-image.png
+      - GENERATOR_USER=matemat
+      - GENERATOR_PASS=$SERVICE_PASSWORD_GENERATOR
+      - INTERNAL_BASE_URL=http://matemat:3000
+      - DATABASE_PATH=/data/matemat.db
+      - UPLOADS_DIR=/data/uploads
+    volumes:
+      - matemat-data:/data
     depends_on:
       - og-image-generator
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.matemat.loadbalancer.server.port=3000
-      - traefik.http.routers.http-0-sw6l5xslx7w42qtaudg4sbkk-matemat.service=matemat
-      - traefik.http.routers.https-0-sw6l5xslx7w42qtaudg4sbkk-matemat.service=matemat
 
   og-image-generator:
     build:
@@ -24,3 +23,6 @@ services:
     environment:
       - AUTH_USERS=matemat
       - AUTH_USER_matemat_PASSWORD=$SERVICE_PASSWORD_GENERATOR
+
+volumes:
+  matemat-data:

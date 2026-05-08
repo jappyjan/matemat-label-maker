@@ -1,51 +1,23 @@
-import { writeFileSync } from "fs";
-
-interface GeneratorConnectionDetails {
+export interface GeneratorConnection {
   endpoint: string;
   username: string;
   password: string;
 }
 
-export async function generateLabel(
-  svgTemplateFileName: string,
-  placeholders: Record<string, string>,
-  generatorConnectionDetails: GeneratorConnectionDetails,
-): Promise<Blob | null> {
-  try {
-    const baseURL = process.env.NEXT_PUBLIC_BASE_URL!;
-    const svgTemplateUrl = `${baseURL}/${svgTemplateFileName}`;
-
-    console.log("connection", generatorConnectionDetails);
-
-    const searchParams = new URLSearchParams();
-    searchParams.append("svgUrl", svgTemplateUrl);
-    Object.entries(placeholders).forEach(([key, value]) => {
-      searchParams.append(key, value);
-    });
-
-    const basicAuthHeader = `Basic ${Buffer.from(`${generatorConnectionDetails.username}:${generatorConnectionDetails.password}`).toString("base64")}`;
-
-    const fullImageURL =
-      generatorConnectionDetails.endpoint + `?${searchParams.toString()}`;
-
-    const response = await fetch(fullImageURL, {
-      method: "GET",
-      headers: {
-        Authorization: basicAuthHeader,
-      },
-    });
-
-    if (!response.ok) {
-      console.log(await response.text());
-      throw new Error(
-        `Failed to generate OG image (${fullImageURL}): ${response.statusText}`,
-      );
-    }
-
-    const blob = await response.blob();
-    return blob;
-  } catch (error) {
-    console.error("Failed to generate OG image", error);
-    return null;
+export async function generateLabelPng(
+  svgUrl: string,
+  generatorConnection: GeneratorConnection,
+): Promise<Blob> {
+  const params = new URLSearchParams({ svgUrl });
+  const fullURL = `${generatorConnection.endpoint}?${params.toString()}`;
+  const auth = `Basic ${Buffer.from(`${generatorConnection.username}:${generatorConnection.password}`).toString("base64")}`;
+  const response = await fetch(fullURL, {
+    method: "GET",
+    headers: { Authorization: auth },
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`og-image-generator ${response.status}: ${text}`);
   }
+  return response.blob();
 }
