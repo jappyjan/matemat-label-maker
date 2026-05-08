@@ -77,6 +77,19 @@ describe("renderLabelSvg", () => {
     expect(fontSizeMatch).not.toBeNull();
     expect(Number(fontSizeMatch![1])).toBeLessThan(96);
   });
+
+  test("short text does not get textLength (avoids glyph stretching)", () => {
+    const svg = renderLabelSvg(baseConfig, null);
+    // The "0,33 L" is short for its slot — should NOT have textLength
+    expect(svg).toMatch(/<tspan[^>]*>0,33 L<\/tspan>/);
+    expect(svg).not.toMatch(/<tspan[^>]*textLength[^>]*>0,33 L/);
+  });
+
+  test("long text does get textLength (compression safety net)", () => {
+    const longName = "an extremely long product name that does not fit at all";
+    const svg = renderLabelSvg({ ...baseConfig, name: longName }, null);
+    expect(svg).toMatch(new RegExp(`<tspan[^>]*textLength="\\d+"[^>]*>${longName}`));
+  });
 });
 
 describe("rotateSvg", () => {

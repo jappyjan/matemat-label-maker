@@ -1,5 +1,5 @@
 import { CANVAS, SLOTS, type SlotKey } from "./slots";
-import { fitFontSize } from "./fit-font";
+import { fitFontSize, measureTextWidth } from "./fit-font";
 import { extractSvgInner, recolorSvg } from "./recolor-svg";
 import type { LabelConfig, LoadedLogo } from "./types";
 
@@ -25,8 +25,14 @@ function escapeXml(value: string): string {
 function renderTextSlot(text: string, slot: typeof SLOTS[Exclude<SlotKey, "logo">], color: string): string {
   if (!text) return "";
   const fontSize = fitFontSize(text, slot.width, slot.defaultFontSize, MIN_FONT);
+  const naturalWidth = measureTextWidth(text, fontSize);
   const safe = escapeXml(text);
-  return `<text font-family="Inter" font-size="${fontSize}" fill="${color}"><tspan x="${slot.x}" y="${slot.y}" textLength="${slot.width}" lengthAdjust="spacingAndGlyphs">${safe}</tspan></text>`;
+  // Only emit textLength when text would otherwise overflow the slot — otherwise
+  // lengthAdjust=spacingAndGlyphs would visually stretch short text.
+  const lengthAttrs = naturalWidth > slot.width
+    ? ` textLength="${slot.width}" lengthAdjust="spacingAndGlyphs"`
+    : "";
+  return `<text font-family="Inter" font-size="${fontSize}" fill="${color}"><tspan x="${slot.x}" y="${slot.y}"${lengthAttrs}>${safe}</tspan></text>`;
 }
 
 function renderLogo(logo: LoadedLogo | null, foreground: string): string {
