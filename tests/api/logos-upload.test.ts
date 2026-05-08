@@ -64,6 +64,14 @@ describe("POST /api/logos", () => {
     expect(res._getStatusCode()).toBe(415);
   });
 
+  test("rejects uploads larger than the size limit", async () => {
+    const handler = await importHandler("../../src/pages/api/logos/index");
+    const big = Buffer.alloc(11 * 1024 * 1024, 0xff);
+    const { req, res } = multipartReq("big.svg", "image/svg+xml", big);
+    await handler(req, res);
+    expect(res._getStatusCode()).toBe(413);
+  });
+
   test("GET /api/logos lists uploaded logos", async () => {
     const handler = await importHandler("../../src/pages/api/logos/index");
     const { req: postReq, res: postRes } = multipartReq("logo.png", "image/png", Buffer.from([0x89, 0x50, 0x4e, 0x47]));

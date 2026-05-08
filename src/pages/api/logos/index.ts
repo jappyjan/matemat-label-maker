@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { nanoid } from "nanoid";
-import formidable from "formidable";
-import { readFile } from "node:fs/promises";
+import formidable, { errors as formidableErrors } from "formidable";
+import { readFile, unlink } from "node:fs/promises";
 import { getDb } from "~/server/db/client";
 import { logos } from "~/server/db/schema";
 import {
@@ -47,7 +47,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     ({ file } = await parseForm(req));
   } catch (err) {
-    if (err instanceof Error && err.message.includes("maxFileSize")) {
+    const code = (err as { code?: number }).code;
+    if (
+      code === formidableErrors.biggerThanTotalMaxFileSize ||
+      code === formidableErrors.biggerThanMaxFileSize
+    ) {
       return res.status(413).json({ error: "too_large" });
     }
     return res.status(400).json({ error: "bad_upload" });
@@ -55,12 +59,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const mime = file.mimetype ?? "";
   if (!isAllowedMime(mime)) {
+    await unlink(file.filepath).catch(() => {});
     return res.status(415).json({ error: "unsupported_format" });
   }
 
   const id = nanoid(12);
   const ext = extensionFromMime(mime);
   const bytes = await readFile(file.filepath);
+  await unlink(file.filepath).catch(() => {});
   const storage = getLogoStorage();
   const { relativePath } = await storage.save({ id, extension: ext, bytes });
 
