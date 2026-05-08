@@ -31,10 +31,10 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     DATABASE_PATH: process.env.DATABASE_PATH,
     UPLOADS_DIR: process.env.UPLOADS_DIR,
-    GENERATOR_URL: process.env.GENERATOR_URL ?? process.env.NEXT_PUBLIC_GENERATOR_URL,
-    GENERATOR_USER: process.env.GENERATOR_USER ?? process.env.NEXT_PUBLIC_GENERATOR_USER,
-    GENERATOR_PASS: process.env.GENERATOR_PASS ?? process.env.NEXT_PUBLIC_GENERATOR_PASS,
-    INTERNAL_BASE_URL: process.env.INTERNAL_BASE_URL ?? process.env.NEXT_PUBLIC_BASE_URL,
+    GENERATOR_URL: process.env.GENERATOR_URL,
+    GENERATOR_USER: process.env.GENERATOR_USER,
+    GENERATOR_PASS: process.env.GENERATOR_PASS,
+    INTERNAL_BASE_URL: process.env.INTERNAL_BASE_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

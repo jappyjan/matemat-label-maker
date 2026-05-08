@@ -9,5 +9,6 @@ ENV SKIP_ENV_VALIDATION=1
 RUN npm run build
 
 ENV NODE_ENV=production
+RUN mkdir -p /data/uploads
 EXPOSE 3000
 CMD ["npm", "run", "start"]
