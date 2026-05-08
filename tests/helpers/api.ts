@@ -2,6 +2,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { resetDbCache } from "~/server/db/client";
+import { resetLogoStorage } from "~/server/logos/storage";
 
 export interface ApiTestEnv {
   databasePath: string;
@@ -21,12 +22,14 @@ export function setupApiEnv(): ApiTestEnv {
   process.env.DATABASE_PATH = databasePath;
   process.env.UPLOADS_DIR = uploadsDir;
   resetDbCache();
+  resetLogoStorage();
   return {
     databasePath,
     uploadsDir,
     rootDir: root,
     cleanup: () => {
       resetDbCache();
+      resetLogoStorage();
       if (prev.DATABASE_PATH === undefined) {
         delete process.env.DATABASE_PATH;
       } else {

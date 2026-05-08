@@ -40,3 +40,8 @@ export function getLogoStorage(): LogoStorage {
   cachedStorage = new LogoStorage(root);
   return cachedStorage;
 }
+
+/** Reset the singleton — call in test teardown when UPLOADS_DIR changes. */
+export function resetLogoStorage(): void {
+  cachedStorage = null;
+}
