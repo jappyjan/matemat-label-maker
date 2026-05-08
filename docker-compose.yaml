@@ -18,8 +18,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.matemat.loadbalancer.server.port=3000
-      - traefik.http.routers.http-0-sw6l5xslx7w42qtaudg4sbkk-matemat.service=matemat
-      - traefik.http.routers.https-0-sw6l5xslx7w42qtaudg4sbkk-matemat.service=matemat
 
   og-image-generator:
     build:
