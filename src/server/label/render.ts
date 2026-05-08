@@ -34,7 +34,13 @@ function renderTextSlot(text: string, slot: typeof SLOTS[Exclude<SlotKey, "logo"
   const lengthAttrs = tight
     ? ` textLength="${slot.width}" lengthAdjust="spacingAndGlyphs"`
     : "";
-  return `<text font-family="Inter" font-size="${fontSize}" fill="${color}"><tspan x="${slot.x}" y="${slot.y}"${lengthAttrs}>${safe}</tspan></text>`;
+  const align = slot.align ?? "start";
+  // text-anchor anchors the text at x: "start" left, "middle" center, "end" right.
+  const tspanX =
+    align === "middle" ? slot.x + slot.width / 2
+    : align === "end"  ? slot.x + slot.width
+    : slot.x;
+  return `<text font-family="Inter" font-size="${fontSize}" fill="${color}" text-anchor="${align}"><tspan x="${tspanX}" y="${slot.y}"${lengthAttrs}>${safe}</tspan></text>`;
 }
 
 function renderLogo(logo: LoadedLogo | null, foreground: string): string {
