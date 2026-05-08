@@ -6,6 +6,7 @@ import { useDebounce } from "~/_hooks/use-debounce";
 export function LabelGenerator() {
   const [placeholders, setPlaceholders] = useState<Record<string, string>>({
     name: "",
+    subtitle: "",
     size: "",
     price: "",
     footerLine1: "",
