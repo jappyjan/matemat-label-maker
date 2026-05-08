@@ -55,7 +55,7 @@ export function LogoPickerDialog({
   };
 
   const dz = useDropzone({
-    onDrop,
+    onDrop: (files) => { void onDrop(files); },
     accept: { "image/svg+xml": [".svg"], "image/png": [".png"], "image/jpeg": [".jpg", ".jpeg"] },
     multiple: true,
   });

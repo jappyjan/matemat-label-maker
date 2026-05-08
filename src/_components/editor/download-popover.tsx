@@ -24,7 +24,7 @@ export function DownloadPopover({
   return (
     <Popover
       trigger={
-        <Button variant="secondary" disabled={disabled || !labelId}>
+        <Button variant="secondary" disabled={disabled === true || !labelId}>
           <Download className="h-4 w-4" /> Download
         </Button>
       }
