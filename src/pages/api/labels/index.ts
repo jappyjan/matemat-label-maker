@@ -11,41 +11,51 @@ const promoteSchema = z.object({
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const db = getDb();
   if (req.method === "POST") {
     const parsed = promoteSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ error: "bad_input" });
     const { draftId, name } = parsed.data;
+    try {
+      const db = getDb();
+      const draft = (await db.select().from(drafts).where(eq(drafts.id, draftId)).limit(1))[0];
+      if (!draft) return res.status(404).json({ error: "draft_not_found" });
 
-    const draft = (await db.select().from(drafts).where(eq(drafts.id, draftId)).limit(1))[0];
-    if (!draft) return res.status(404).json({ error: "draft_not_found" });
-
-    const id = nanoid(12);
-    const now = Date.now();
-    db.transaction((tx) => {
-      tx.insert(labels).values({
-        id,
-        name,
-        config: draft.config,
-        createdAt: now,
-        updatedAt: now,
-      }).run();
-      tx.delete(drafts).where(eq(drafts.id, draftId)).run();
-    });
-    return res.status(200).json({ id });
+      const id = nanoid(12);
+      const now = Date.now();
+      db.transaction((tx) => {
+        tx.insert(labels).values({
+          id,
+          name,
+          config: draft.config,
+          createdAt: now,
+          updatedAt: now,
+        }).run();
+        tx.delete(drafts).where(eq(drafts.id, draftId)).run();
+      });
+      return res.status(200).json({ id });
+    } catch (err) {
+      console.error("DB error:", err);
+      return res.status(500).json({ error: "storage" });
+    }
   }
 
   if (req.method === "GET") {
-    const rows = await db.select().from(labels);
-    return res.status(200).json(
-      rows.map((row) => ({
-        id: row.id,
-        name: row.name,
-        config: JSON.parse(row.config) as unknown,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      })),
-    );
+    try {
+      const db = getDb();
+      const rows = await db.select().from(labels);
+      return res.status(200).json(
+        rows.map((row) => ({
+          id: row.id,
+          name: row.name,
+          config: JSON.parse(row.config) as unknown,
+          createdAt: row.createdAt,
+          updatedAt: row.updatedAt,
+        })),
+      );
+    } catch (err) {
+      console.error("DB error:", err);
+      return res.status(500).json({ error: "storage" });
+    }
   }
   res.setHeader("Allow", "GET, POST");
   return res.status(405).end();
