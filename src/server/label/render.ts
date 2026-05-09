@@ -1,4 +1,4 @@
-import { CANVAS, SLOTS, type SlotKey } from "./slots";
+import { CANVAS, SLOTS, type SlotKey, type SlotBox } from "./slots";
 import { fitFontSize, measureTextWidth } from "./fit-font";
 import { extractSvgInner, recolorSvg } from "./recolor-svg";
 import type { LabelConfig, LoadedLogo } from "./types";
@@ -23,7 +23,7 @@ function escapeXml(value: string): string {
     .replaceAll("'", "&apos;");
 }
 
-function renderTextSlot(text: string, slot: typeof SLOTS[Exclude<SlotKey, "logo">], color: string): string {
+function renderTextSlot(text: string, slot: SlotBox, color: string): string {
   if (!text) return "";
   const fontSize = fitFontSize(text, slot.width, slot.defaultFontSize, MIN_FONT);
   const naturalWidth = measureTextWidth(text, fontSize);
