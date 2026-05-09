@@ -2,8 +2,9 @@ import { fitFontSize } from "~/server/label/fit-font";
 import { SLOTS } from "~/server/label/slots";
 import type { LabelConfig } from "~/server/label/types";
 
-const FIELDS: Array<{ key: keyof Pick<LabelConfig, "name" | "size" | "price" | "footerLine1" | "footerLine2">; label: string; slot: keyof typeof SLOTS }> = [
+const FIELDS: Array<{ key: keyof Pick<LabelConfig, "name" | "subtitle" | "size" | "price" | "footerLine1" | "footerLine2">; label: string; slot: keyof typeof SLOTS }> = [
   { key: "name", label: "Name", slot: "name" },
+  { key: "subtitle", label: "Subtitle", slot: "subtitle" },
   { key: "size", label: "Size", slot: "size" },
   { key: "price", label: "Price", slot: "price" },
   { key: "footerLine1", label: "Footer line 1", slot: "footerLine1" },
