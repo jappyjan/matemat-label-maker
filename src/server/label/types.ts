@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const labelConfigSchema = z.object({
   name: z.string().default(""),
+  subtitle: z.string().default(""),
   size: z.string().default(""),
   price: z.string().default(""),
   footerLine1: z.string().default(""),

@@ -4,6 +4,7 @@ import type { LabelConfig, LoadedLogo } from "~/server/label/types";
 
 const baseConfig: LabelConfig = {
   name: "fritz-kola",
+  subtitle: "",
   size: "0,33 L",
   price: "2,00 €",
   footerLine1: "Koffein: 25 mg/100 ml",
@@ -34,6 +35,35 @@ describe("renderLabelSvg", () => {
     );
     expect(svg).toContain("A &amp; B &lt;c&gt;");
     expect(svg).not.toContain("A & B <c>");
+  });
+
+  test("renders subtitle text when set, centered at canvas midline", () => {
+    const svg = renderLabelSvg(
+      { ...baseConfig, subtitle: "Classic Refreshing" },
+      null,
+    );
+    expect(svg).toContain("Classic Refreshing");
+    // subtitle slot is centered: text-anchor="middle" + tspan x="315" (canvas center)
+    expect(svg).toMatch(/<text[^>]*text-anchor="middle"[^>]*>\s*<tspan[^>]*x="315"[^>]*>Classic Refreshing<\/tspan>/);
+  });
+
+  test("omits subtitle element when subtitle is empty", () => {
+    const svg = renderLabelSvg({ ...baseConfig, subtitle: "" }, null);
+    // empty subtitle → renderTextSlot returns "" → no <text> element with font-style="italic"
+    // (subtitle is the only slot with fontStyle: "italic", so its absence proves the slot was skipped)
+    expect(svg).not.toContain('font-style="italic"');
+  });
+
+  test("emits font-style=\"italic\" for the subtitle slot only", () => {
+    const svg = renderLabelSvg(
+      { ...baseConfig, subtitle: "Classic Refreshing" },
+      null,
+    );
+    // subtitle's <text> element must carry font-style="italic"
+    expect(svg).toMatch(/<text[^>]*font-style="italic"[^>]*>\s*<tspan[^>]*>Classic Refreshing<\/tspan>/);
+    // No other slot should have font-style — count occurrences
+    const italicMatches = svg.match(/font-style="italic"/g) ?? [];
+    expect(italicMatches.length).toBe(1);
   });
 
   test("omits logo block when no logo provided", () => {

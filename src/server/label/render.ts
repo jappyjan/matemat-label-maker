@@ -1,10 +1,11 @@
-import { CANVAS, SLOTS, type SlotKey } from "./slots";
+import { CANVAS, SLOTS, type SlotKey, type SlotBox } from "./slots";
 import { fitFontSize, measureTextWidth } from "./fit-font";
 import { extractSvgInner, recolorSvg } from "./recolor-svg";
 import type { LabelConfig, LoadedLogo } from "./types";
 
-const TEXT_SLOTS: Array<{ key: Exclude<SlotKey, "logo">; field: keyof Pick<LabelConfig, "name" | "size" | "price" | "footerLine1" | "footerLine2"> }> = [
+const TEXT_SLOTS: Array<{ key: Exclude<SlotKey, "logo">; field: keyof Pick<LabelConfig, "name" | "subtitle" | "size" | "price" | "footerLine1" | "footerLine2"> }> = [
   { key: "name",        field: "name" },
+  { key: "subtitle",    field: "subtitle" },
   { key: "size",        field: "size" },
   { key: "price",       field: "price" },
   { key: "footerLine1", field: "footerLine1" },
@@ -22,7 +23,7 @@ function escapeXml(value: string): string {
     .replaceAll("'", "&apos;");
 }
 
-function renderTextSlot(text: string, slot: typeof SLOTS[Exclude<SlotKey, "logo">], color: string): string {
+function renderTextSlot(text: string, slot: SlotBox, color: string): string {
   if (!text) return "";
   const fontSize = fitFontSize(text, slot.width, slot.defaultFontSize, MIN_FONT);
   const naturalWidth = measureTextWidth(text, fontSize);
@@ -40,7 +41,8 @@ function renderTextSlot(text: string, slot: typeof SLOTS[Exclude<SlotKey, "logo"
     align === "middle" ? slot.x + slot.width / 2
     : align === "end"  ? slot.x + slot.width
     : slot.x;
-  return `<text font-family="Inter" font-size="${fontSize}" fill="${color}" text-anchor="${align}"><tspan x="${tspanX}" y="${slot.y}"${lengthAttrs}>${safe}</tspan></text>`;
+  const styleAttr = slot.fontStyle ? ` font-style="${slot.fontStyle}"` : "";
+  return `<text font-family="Inter" font-size="${fontSize}" fill="${color}" text-anchor="${align}"${styleAttr}><tspan x="${tspanX}" y="${slot.y}"${lengthAttrs}>${safe}</tspan></text>`;
 }
 
 function renderLogo(logo: LoadedLogo | null, foreground: string): string {
