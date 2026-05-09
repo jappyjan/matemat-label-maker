@@ -4,6 +4,7 @@ import type { LabelConfig, LoadedLogo } from "~/server/label/types";
 
 const baseConfig: LabelConfig = {
   name: "fritz-kola",
+  subtitle: "",
   size: "0,33 L",
   price: "2,00 €",
   footerLine1: "Koffein: 25 mg/100 ml",
