@@ -41,7 +41,8 @@ function renderTextSlot(text: string, slot: typeof SLOTS[Exclude<SlotKey, "logo"
     align === "middle" ? slot.x + slot.width / 2
     : align === "end"  ? slot.x + slot.width
     : slot.x;
-  return `<text font-family="Inter" font-size="${fontSize}" fill="${color}" text-anchor="${align}"><tspan x="${tspanX}" y="${slot.y}"${lengthAttrs}>${safe}</tspan></text>`;
+  const styleAttr = slot.fontStyle ? ` font-style="${slot.fontStyle}"` : "";
+  return `<text font-family="Inter" font-size="${fontSize}" fill="${color}" text-anchor="${align}"${styleAttr}><tspan x="${tspanX}" y="${slot.y}"${lengthAttrs}>${safe}</tspan></text>`;
 }
 
 function renderLogo(logo: LoadedLogo | null, foreground: string): string {

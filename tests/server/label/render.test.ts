@@ -53,6 +53,18 @@ describe("renderLabelSvg", () => {
     expect(svg).not.toContain("Classic Refreshing");
   });
 
+  test("emits font-style=\"italic\" for the subtitle slot only", () => {
+    const svg = renderLabelSvg(
+      { ...baseConfig, subtitle: "Classic Refreshing" },
+      null,
+    );
+    // subtitle's <text> element must carry font-style="italic"
+    expect(svg).toMatch(/<text[^>]*font-style="italic"[^>]*>\s*<tspan[^>]*>Classic Refreshing<\/tspan>/);
+    // No other slot should have font-style — count occurrences
+    const italicMatches = svg.match(/font-style="italic"/g) ?? [];
+    expect(italicMatches.length).toBe(1);
+  });
+
   test("omits logo block when no logo provided", () => {
     const svg = renderLabelSvg({ ...baseConfig, logoId: null }, null);
     expect(svg).not.toContain("<image");
