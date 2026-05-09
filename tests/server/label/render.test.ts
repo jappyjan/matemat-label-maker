@@ -37,6 +37,22 @@ describe("renderLabelSvg", () => {
     expect(svg).not.toContain("A & B <c>");
   });
 
+  test("renders subtitle text when set, centered at canvas midline", () => {
+    const svg = renderLabelSvg(
+      { ...baseConfig, subtitle: "Classic Refreshing" },
+      null,
+    );
+    expect(svg).toContain("Classic Refreshing");
+    // subtitle slot is centered: text-anchor="middle" + tspan x="315" (canvas center)
+    expect(svg).toMatch(/<text[^>]*text-anchor="middle"[^>]*>\s*<tspan[^>]*x="315"[^>]*>Classic Refreshing<\/tspan>/);
+  });
+
+  test("omits subtitle element when subtitle is empty", () => {
+    const svg = renderLabelSvg({ ...baseConfig, subtitle: "" }, null);
+    // empty subtitle → renderTextSlot returns "", so no element with the subtitle text appears
+    expect(svg).not.toContain("Classic Refreshing");
+  });
+
   test("omits logo block when no logo provided", () => {
     const svg = renderLabelSvg({ ...baseConfig, logoId: null }, null);
     expect(svg).not.toContain("<image");

@@ -3,8 +3,9 @@ import { fitFontSize, measureTextWidth } from "./fit-font";
 import { extractSvgInner, recolorSvg } from "./recolor-svg";
 import type { LabelConfig, LoadedLogo } from "./types";
 
-const TEXT_SLOTS: Array<{ key: Exclude<SlotKey, "logo">; field: keyof Pick<LabelConfig, "name" | "size" | "price" | "footerLine1" | "footerLine2"> }> = [
+const TEXT_SLOTS: Array<{ key: Exclude<SlotKey, "logo">; field: keyof Pick<LabelConfig, "name" | "subtitle" | "size" | "price" | "footerLine1" | "footerLine2"> }> = [
   { key: "name",        field: "name" },
+  { key: "subtitle",    field: "subtitle" },
   { key: "size",        field: "size" },
   { key: "price",       field: "price" },
   { key: "footerLine1", field: "footerLine1" },
