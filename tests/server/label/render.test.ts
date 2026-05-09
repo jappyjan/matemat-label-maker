@@ -49,8 +49,9 @@ describe("renderLabelSvg", () => {
 
   test("omits subtitle element when subtitle is empty", () => {
     const svg = renderLabelSvg({ ...baseConfig, subtitle: "" }, null);
-    // empty subtitle → renderTextSlot returns "", so no element with the subtitle text appears
-    expect(svg).not.toContain("Classic Refreshing");
+    // empty subtitle → renderTextSlot returns "" → no <text> element with font-style="italic"
+    // (subtitle is the only slot with fontStyle: "italic", so its absence proves the slot was skipped)
+    expect(svg).not.toContain('font-style="italic"');
   });
 
   test("emits font-style=\"italic\" for the subtitle slot only", () => {
